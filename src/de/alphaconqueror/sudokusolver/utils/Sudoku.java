@@ -125,10 +125,6 @@ public class Sudoku {
         return getBoardAt(x, y).getField(x % boardWidth, y % boardHeight);
     }
 
-    public Field getFieldAt(int index) {
-        return getFieldAt(index % (width * boardWidth), Math.floorDiv(index, width * boardWidth));
-    }
-
     public void setFieldValueAt(int x, int y, int value) {
         getBoardAt(x, y).setFieldValue(x % boardWidth, y % boardHeight, value);
     }

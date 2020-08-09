@@ -5,15 +5,15 @@ import de.alphaconqueror.sudokusolver.utils.Sudoku;
 public class SudokuSolver {
 
     private final static Sudoku sudoku = new Sudoku(new int[][] {
-                {0, 0, 0, 0, 0, 0, 1, 9, 0},
-                {2, 3, 0, 0, 0, 0, 6, 0, 0},
-                {0, 0, 0, 2, 4, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 9, 6, 0},
-                {0, 0, 0, 1, 6, 0, 0, 7, 0},
-                {0, 4, 8, 0, 7, 0, 0, 0, 0},
-                {0, 0, 1, 0, 0, 3, 4, 0, 5},
-                {0, 0, 9, 0, 0, 8, 0, 0, 0},
-                {0, 0, 6, 0, 0, 5, 8, 0, 0}
+                {0, 0, 0, 5, 4, 6, 0, 0, 9},
+                {0, 2, 0, 0, 0, 0, 0, 0, 7},
+                {0, 0, 3, 9, 0, 0, 0, 0, 4},
+                {9, 0, 5, 0, 0, 0, 0, 7, 0},
+                {7, 0, 0, 0, 0, 0, 0, 2, 0},
+                {0, 0, 0, 0, 9, 3, 0, 0, 0},
+                {0, 5, 6, 0, 0, 8, 0, 0, 0},
+                {0, 1, 0, 0, 3, 9, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 8, 0, 6}
             }, 3, 3);
 
     public static void main(String[] args) {
@@ -23,9 +23,12 @@ public class SudokuSolver {
 
         SolverManager solverManager = new SolverManager(sudoku);
 
-        System.out.println("\nSolved first degree:");
+        long millis = System.currentTimeMillis();
 
-        printSudoku(solverManager.solveSudokuFirstDegree(sudoku.clone(), "1"));
+        Sudoku solvedSudoku = solverManager.solveSudoku(sudoku);
+
+        printSudoku(solvedSudoku);
+        System.out.println("Calculated in " + (System.currentTimeMillis() - millis)/1000.0 + " seconds.");
     }
 
     public static void printSudoku(Sudoku sudoku) {

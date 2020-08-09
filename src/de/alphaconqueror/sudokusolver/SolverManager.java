@@ -9,7 +9,6 @@ import java.util.*;
 public class SolverManager {
 
     private final int boardWidth, boardHeight, width, height;
-    private final boolean DEBUG = true;
 
     public SolverManager(Sudoku sudoku) {
         this.boardWidth = sudoku.getBoardWidth();
@@ -18,9 +17,9 @@ public class SolverManager {
         this.height = sudoku.getHeight();
     }
 
-    public Sudoku solveSudokuFirstDegree(Sudoku sudoku, String generation) {
+    public Sudoku solveSudoku(Sudoku sudoku) {
         int solvedFields = 0;
-        List<Integer> unsolvedFields = getUnsolvedFields(sudoku);
+        Set<Integer> unsolvedFields = getUnsolvedFields(sudoku);
 
         if(unsolvedFields.size() == 0)
             return sudoku;
@@ -31,7 +30,7 @@ public class SolverManager {
             Set<Integer> possibilities = getPossibilities(sudoku, x, y);
 
             switch(possibilities.size()) {
-                case 0: throw new UnsupportedOperationException("An error occurred while trying to solve the sudoku. Generation = " + generation);
+                case 0: throw new UnsupportedOperationException("An error occurred while trying to solve the sudoku.");
                 case 1:
                     sudoku.setFieldValueAt(x, y, possibilities.iterator().next());
                     solvedFields++;
@@ -41,45 +40,40 @@ public class SolverManager {
             }
         }
 
-        if(solvedFields == 0) {
-            if(DEBUG)
-                System.out.println("Continue second degree solving:");
-        }
-
-        return solvedFields == 0 ? solveSudokuSecondDegree(sudoku, generation) : solveSudokuFirstDegree(sudoku, generation);
+        return solvedFields == 0 ? guessSolution(sudoku) : solveSudoku(sudoku);
     }
 
-    public Sudoku solveSudokuSecondDegree(Sudoku sudoku, String generation) {
-        int g = 1;
+    public Sudoku guessSolution(Sudoku sudoku) {
+        int x = -1, y = -1;
+        Set<Integer> possibilities = new HashSet<>();
 
         for(int fieldIndex : getUnsolvedFields(sudoku)) {
-            int x = fieldIndex % (width * boardWidth),
-                y = Math.floorDiv(fieldIndex, width * boardWidth);
+            int i = fieldIndex % (width * boardWidth),
+                j = Math.floorDiv(fieldIndex, width * boardWidth);
+            Set<Integer> pos = getPossibilities(sudoku, i, j);
 
-            for(int possibility : getPossibilities(sudoku, x, y)) {
-                Sudoku clone = sudoku.clone();
-
-                clone.setFieldValueAt(x, y, possibility);
-
-                if(DEBUG)
-                    System.out.println("Checking sudoku with value = " + possibility + " at x = " + x + " | y = " + y + ". Generation = " + generation + "." + g);
-
-                g++;
-
-                try {
-                    return solveSudokuFirstDegree(clone, generation + "." + g);
-                } catch(Exception e) {
-                    if(DEBUG)
-                        System.out.println("Caught exception. Generation = " + generation + "." + g);
-                }
+            if(possibilities.isEmpty() || pos.size() < possibilities.size()) {
+                possibilities = new HashSet<>(pos);
+                x = i;
+                y = j;
             }
+        }
+
+        for(int possibility : possibilities) {
+            Sudoku clone = sudoku.clone();
+
+            clone.setFieldValueAt(x, y, possibility);
+
+            try {
+                return solveSudoku(clone);
+            } catch(Exception ignored) {}
         }
 
         throw new UnsupportedOperationException("Solving not possible.");
     }
 
-    private List<Integer> getUnsolvedFields(Sudoku sudoku) {
-        List<Integer> unsolvedFields = new ArrayList<>();
+    private Set<Integer> getUnsolvedFields(Sudoku sudoku) {
+        Set<Integer> unsolvedFields = new HashSet<>();
 
         for(int y = 0; y < height * boardHeight; y++) {
             for(int x = 0; x < width * boardWidth; x++) {

@@ -49,8 +49,6 @@ public class Board {
         return fields;
     }
 
-
-
     public Board clone() {
         List<Field> fieldClones = new ArrayList<>();
 
