@@ -1,23 +1,22 @@
+/*
+ * @author: AlphaConqueror
+ * Copyright (c) 2020
+ * All rights reserved.
+ */
+
 package de.alphaconqueror.sudokusolver;
 
-import de.alphaconqueror.sudokusolver.utils.Sudoku;
+import de.alphaconqueror.sudokusolver.structure.Sudoku;
+import de.alphaconqueror.sudokusolver.utils.IOManager;
+import de.alphaconqueror.sudokusolver.utils.SolverManager;
 
 public class SudokuSolver {
 
-    private final static Sudoku sudoku = new Sudoku(new int[][] {
-                {0, 0, 0, 5, 4, 6, 0, 0, 9},
-                {0, 2, 0, 0, 0, 0, 0, 0, 7},
-                {0, 0, 3, 9, 0, 0, 0, 0, 4},
-                {9, 0, 5, 0, 0, 0, 0, 7, 0},
-                {7, 0, 0, 0, 0, 0, 0, 2, 0},
-                {0, 0, 0, 0, 9, 3, 0, 0, 0},
-                {0, 5, 6, 0, 0, 8, 0, 0, 0},
-                {0, 1, 0, 0, 3, 9, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 8, 0, 6}
-            }, 3, 3);
-
     public static void main(String[] args) {
-        //TODO: Read input
+        if(args.length == 0)
+            System.err.println("Please specify a file containing the sudoku and its board specifications.");
+
+        Sudoku sudoku = IOManager.readSudoku(args[0]);
 
         printSudoku(sudoku);
 
@@ -27,16 +26,23 @@ public class SudokuSolver {
 
         Sudoku solvedSudoku = solverManager.solveSudoku(sudoku);
 
+        System.out.println("\nSOLUTION: ");
         printSudoku(solvedSudoku);
         System.out.println("Calculated in " + (System.currentTimeMillis() - millis)/1000.0 + " seconds.");
     }
 
+    /**
+     * Prints the {@link Sudoku} to the standard output {@link java.io.PrintStream}.
+     *
+     * @param sudoku The sudoku to be printed.
+     */
     public static void printSudoku(Sudoku sudoku) {
         int boardWidth = sudoku.getBoardWidth(),
             boardHeight = sudoku.getBoardHeight(),
             width = sudoku.getWidth(),
-            height = sudoku.getHeight();
-        String horizontalSeparator = "-".repeat(Math.max(0, width * (2 * boardWidth + 1) + (width - 1)));
+            height = sudoku.getHeight(),
+            fieldLength = Math.floorDiv(boardWidth * boardHeight, 10) + 1;
+        String horizontalSeparator = "-".repeat(Math.max(0, width * (boardWidth * (fieldLength + 1) + 1) + (width - 1)));
 
         System.out.println(horizontalSeparator);
 
@@ -44,7 +50,9 @@ public class SudokuSolver {
             StringBuilder line = new StringBuilder(" ");
 
             for(int x = 0; x < width * boardWidth; x++) {
-                line.append(sudoku.getFieldAt(x, y).getValue()).append(" ");
+                int value = sudoku.getFieldAt(x, y).getValue();
+
+                line.append(" ".repeat(fieldLength - (value + "").length())).append(value).append(" ");
 
                 if(x < width * boardWidth - 1 && (x + 1) % boardWidth == 0)
                     line.append("| ");
