@@ -42,7 +42,7 @@ public class SudokuSolver {
             width = sudoku.getWidth(),
             height = sudoku.getHeight(),
             fieldLength = Math.floorDiv(boardWidth * boardHeight, 10) + 1;
-        String horizontalSeparator = "-".repeat(Math.max(0, width * (boardWidth * (fieldLength + 1) + 1) + (width - 1)));
+        String horizontalSeparator = repeatString("-", Math.max(0, width * (boardWidth * (fieldLength + 1) + 1) + (width - 1)));
 
         System.out.println(horizontalSeparator);
 
@@ -52,7 +52,7 @@ public class SudokuSolver {
             for(int x = 0; x < width * boardWidth; x++) {
                 int value = sudoku.getFieldAt(x, y).getValue();
 
-                line.append(" ".repeat(fieldLength - (value + "").length())).append(value).append(" ");
+                line.append(repeatString(" ", fieldLength - (value + "").length())).append(value).append(" ");
 
                 if(x < width * boardWidth - 1 && (x + 1) % boardWidth == 0)
                     line.append("| ");
@@ -65,5 +65,22 @@ public class SudokuSolver {
         }
 
         System.out.println(horizontalSeparator);
+    }
+
+    /**
+     * Repeats a {@link String} a certain amount of times.
+     *
+     * @param s     The string to be repeated.
+     * @param times The amount of times the string should be repeated.
+     *
+     * @return The repeated string.
+     */
+    private static String repeatString(String s, int times) {
+        StringBuilder repeated = new StringBuilder();
+
+        for(int ignored = 0; ignored < times; ignored++)
+            repeated.append(s);
+
+        return repeated.toString();
     }
 }

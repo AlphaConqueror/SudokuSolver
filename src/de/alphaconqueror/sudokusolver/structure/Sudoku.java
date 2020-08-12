@@ -26,14 +26,15 @@ public class Sudoku {
      */
     private final List<Board> boards;
 
+    /** Note: Width and height of the sudoku in amount of fields. */
     public Sudoku(int boardWidth, int boardHeight, int width, int height) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
 
         checkBoardInput();
 
-        this.width = width;
-        this.height = height;
+        this.width = Math.floorDiv(width, boardWidth);
+        this.height = Math.floorDiv(height, boardHeight);
 
         checkSudokuInput();
 
@@ -72,6 +73,12 @@ public class Sudoku {
             throw new IllegalArgumentException("The width can not be smaller than 2.");
         if(height < 2)
             throw new IllegalArgumentException("The height can not be smaller than 2.");
+
+        if(width % boardWidth != 0)
+            throw new IllegalArgumentException("The width has to be a multiple of the board width.");
+
+        if(height % boardHeight != 0)
+            throw new IllegalArgumentException("The height has to be a multiple of the board height.");
     }
 
     /**

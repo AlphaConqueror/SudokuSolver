@@ -43,7 +43,7 @@ public class IOManager {
         while(scanner.hasNext()) {
             String line = scanner.nextLine();
 
-            if(line.isBlank() || line.startsWith("#"))
+            if(isStringBlank(line) || line.startsWith("#"))
                 continue;
 
             String[] row = splitRow(line);
@@ -95,18 +95,20 @@ public class IOManager {
 
         scanner.close();
 
-        if(columnCounter % boardWidth != 0)
-            throw new IllegalArgumentException("The width has to be a multiple of the board width.");
-
-        if(rowCounter % boardHeight != 0)
-            throw new IllegalArgumentException("The height has to be a multiple of the board height.");
-
-        Sudoku sudoku = new Sudoku(boardWidth, boardHeight,
-                Math.floorDiv(columnCounter, boardWidth), Math.floorDiv(rowCounter, boardHeight));
+        Sudoku sudoku = new Sudoku(boardWidth, boardHeight, columnCounter, rowCounter);
 
         readPattern(pattern, sudoku);
 
         return sudoku;
+    }
+
+    private static boolean isStringBlank(String s) {
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) != ' ')
+                return false;
+        }
+
+        return true;
     }
 
     /**
